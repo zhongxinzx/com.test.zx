@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	<!-- pool config -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxTotal" value="${redis.maxTotal}" />
+		<property name="maxIdle" value="${redis.maxIdle}" /> 
+		<property name="maxWaitMillis" value="${redis.maxWaitMillis}" /> 
+		<property name="testOnBorrow" value="${redis.testOnBorrow}" />  
+	</bean>
+	
+	<!-- sharded pool -->
+	<bean id="shardedJedisPool" class="com.test.zx.lib.data.access.redis.config.ZxShardedJedisPool">
+		<property name="propertiesLoader" ref="propertiesLoader" /> 
+		<property name="jedisPoolConfig" ref="jedisPoolConfig" /> 
+	</bean>
+	
+	<!-- redis operation -->
+    <bean id="abstarctCacheOperation" abstract="true">
+        <constructor-arg ref="shardedJedisPool"/>
+    </bean>
+    <bean id="keyCacheOperation"  class="com.test.zx.lib.data.access.redis.operation.KeyCacheOperation"  parent="abstarctCacheOperation"/>
+    <bean id="listCacheOperation" class="com.test.zx.lib.data.access.redis.operation.ListCacheOperation" parent="abstarctCacheOperation"/>
+    <bean id="mapCacheOperation"  class="com.test.zx.lib.data.access.redis.operation.MapCacheOperation"  parent="abstarctCacheOperation"/>
+    <bean id="setCacheOperation"  class="com.test.zx.lib.data.access.redis.operation.SetCacheOperation"  parent="abstarctCacheOperation"/>
+</beans>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+	<!-- 使用annotation 自动注册bean, 并保证@Required、@Autowired的属性被注入 -->
+    <context:component-scan base-package="com.test.zx"><!-- 多个不同的包路径，用,分割。 -->
+        <context:exclude-filter type="annotation"
+                                expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <context:annotation-config/>
+    
+	<!-- properties -->
+	<import resource="classpath:applicationConext-properties.xml" />
+
+	<!-- scriptengine -->
+	<!-- <import resource="classpath:applicationContext-tp-scriptengine.xml" /> -->
+
+	<!-- cache -->
+	<!-- <import resource="classpath:applicationContext-tp-cache-common.xml" />
+	<import resource="classpath:applicationContext-tp-cache-common.extensionpoint.xml" />
+	<import resource="classpath:applicationContext-aip-platform-cache-index.xml" /> -->
+
+	<!-- datasource -->
+	<!-- <import resource="classpath:applicationContext-system-datasource.xml" />
+	<import resource="classpath:applicationContext-tp-datasource-common.xml" />
+
+	<import resource="classpath:applicationContext-tp-datasource-common.extensionpoint.xml" /> -->
+
+	<!-- transaction -->
+	<!-- <import resource="classpath:applicationContext-tp-transaction-common.xml" />
+	<import resource="classpath:applicationContext-tp-transaction-common.extensionpoint.xml" /> -->
+
+	<!-- orm -->
+	<!-- <import resource="classpath:applicationContext-tp-orm-index.xml" />
+	<import resource="classpath:applicationContext-tp-orm-ibatis.extensionpoint.xml" /> -->
+	
+	<!-- platform.dispatcher -->
+	<!-- <import resource="classpath:applicationContext-platform-dispatcher-index.xml" />  
+	<import resource="classpath:applicationContext-platform-application-security.xml" /> -->
+	
+	<!-- zx.lib  -->
+	<import resource="classpath:applicationContext-lib-index.xml" />
+	
+	<!-- zx.dubbo  -->
+	<!--
+	<import resource="classpath:dubbo-provider.xml" />
+	<import resource="classpath:dubbo-consumer.xml" />
+	-->
+</beans>

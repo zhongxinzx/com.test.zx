@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<http auto-config="false">
+        <intercept-url pattern="/" access="permitAll" />
+        <intercept-url pattern="/admin**" access="hasRole('ADMIN')" />
+        <intercept-url pattern="/dba**" access="hasRole('DBA')" />
+        <!-- 自定义登录的界面 -->
+        <form-login login-page="/views/login.jsp" username-parameter="username" password-parameter="password" authentication-failure-url="/views/accessDenied.jsp" />
+        <!-- 自定登录的filter -->
+        <custom-filter before="FORM_LOGIN_FILTER" ref="customLoginFilter" />
+        <!-- 自定退出的filter -->
+        <custom-filter before="LOGOUT_FILTER" ref="customLogoutFilter" />
+    </http>
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider>
+            <user-service>
+                <user name="user" password="user" authorities="ROLE_USER" />
+                <user name="admin" password="root123" authorities="ROLE_ADMIN" />
+                <user name="dba" password="dba" authorities="ROLE_ADMIN,ROLE_DBA" />
+            </user-service>
+        </authentication-provider>
+    </authentication-manager>
+    <!-- 指定登录filter的实现类 -->
+    <beans:bean id="customLoginFilter" class="com.ninelephas.whale.springsecurity.CustomLoginFilter">
+        <beans:property name="authenticationManager" ref="authenticationManager" />
+    </beans:bean>
+    <!-- 指定退出filter的实现类 -->
+    <bean id="customLogoutFilter" class="com.ninelephas.whale.springsecurity.CustomLogoutFilter">
+        <!-- 处理退出的虚拟url -->
+        <property name="filterProcessesUrl" value="/logout" />
+        <!-- 退出处理成功后的默认显示url -->
+        <constructor-arg index="0" value="/" />
+        <constructor-arg index="1">
+            <!-- 退出成功后的handler列表 -->
+            <array>
+                <bean id="securityContextLogoutHandler" class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+                <!-- 加入了开发人员自定义的退出成功处理 -->
+                <bean id="customLogoutSuccessHandler" class="com.ninelephas.whale.springsecurity.CustomLogoutHandler" />
+            </array>
+        </constructor-arg>
+    </bean>
+
+</beans>
